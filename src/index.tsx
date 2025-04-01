@@ -1,2 +1,2 @@
-export {}; // This makes the file a module
+export {};
 import("./bootstrap");
