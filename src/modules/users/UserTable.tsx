@@ -1,100 +1,129 @@
-import React, { useState } from "react";
-import { Button, Drawer, Flex, Space, Table, Tag, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Drawer, Flex, Form, Space, Table, Typography } from "antd";
 import type { TableProps } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import userForm from "./UserForm";
+import { PlusOutlined, EditOutlined, RestOutlined } from "@ant-design/icons";
 import UserForm from "./UserForm";
+import {
+  useDeleteUserMutation,
+  useGetUserByIdMutation,
+  useGetUserListMutation,
+} from "../../store/api/userApiSlice";
 
 interface DataType {
   key: string;
-  name: string;
+  firstName: string;
   age: number;
-  address: string;
-  tags: string[];
+  email: string;
+  tags?: string[];
 }
-
-const columns: TableProps<DataType>["columns"] = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Tags",
-    key: "tags",
-    dataIndex: "tags",
-    render: (_, { tags }) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
-
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
 
 const UserTable = () => {
   const [open, setOpen] = useState(false);
+  const [type, setType] = useState("NEW");
+  const [getUsersList, { data: userData, isLoading, isSuccess, isError }] =
+    useGetUserListMutation();
+  const [
+    getUserById,
+    {
+      data: userByIdData,
+      isLoading: userLoading,
+      isSuccess: userSuccess,
+      isError: userError,
+    },
+  ] = useGetUserByIdMutation();
+  const [
+    deleteUser,
+    {
+      data: userDelete,
+      isLoading: deleteLoading,
+      isSuccess: deleteSuccess,
+      isError: deleteError,
+    },
+  ] = useDeleteUserMutation();
+  const columns: TableProps<DataType>["columns"] = [
+    {
+      title: "First Name",
+      dataIndex: "firstName",
+      key: "firstName",
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastName",
+      key: "lastName",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Mobile",
+      dataIndex: "mobile",
+      key: "mobile",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <Button icon={<EditOutlined />} onClick={() => onEditUser(record)} />
+          <Button
+            icon={<RestOutlined />}
+            onClick={() => onDeleteUser(record)}
+          />
+        </Space>
+      ),
+    },
+  ];
+
+  const onEditUser = (row: any) => {
+    setType("EDIT");
+    getUserById(row._id);
+  };
+
+  const onDeleteUser = (row: any) => {
+    deleteUser(row._id);
+  };
+
+  useEffect(() => {
+    if (userSuccess && userByIdData) {
+      showDrawer();
+    }
+  }, [userSuccess, userByIdData]);
+
+  useEffect(() => {
+    if (deleteSuccess) {
+      getUsersList("");
+    }
+  }, [deleteSuccess]);
+
+  const [form] = Form.useForm();
 
   const showDrawer = () => {
     setOpen(true);
   };
 
   const onClose = () => {
+    setType("NEW");
     setOpen(false);
+  };
+
+  const onSuccess = () => {
+    getUsersList("");
+    onClose();
+  };
+
+  useEffect(() => {
+    getUsersList("");
+  }, []);
+
+  const handleSubmit = () => {
+    form.submit();
   };
 
   return (
@@ -105,7 +134,10 @@ const UserTable = () => {
           New account
         </Button>
       </Flex>
-      <Table<DataType> columns={columns} dataSource={data} />
+      <Table<DataType>
+        columns={columns}
+        dataSource={userData && userData.length > 0 ? userData : []}
+      />
       <Drawer
         title="Create a new account"
         width={720}
@@ -119,13 +151,18 @@ const UserTable = () => {
         extra={
           <Space>
             <Button onClick={onClose}>Cancel</Button>
-            <Button onClick={onClose} type="primary">
+            <Button onClick={handleSubmit} type="primary">
               Submit
             </Button>
           </Space>
         }
       >
-        <UserForm />
+        <UserForm
+          form={form}
+          onSuccess={onSuccess}
+          formData={userByIdData}
+          type={type}
+        />
       </Drawer>
     </Flex>
   );

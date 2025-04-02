@@ -1,108 +1,189 @@
-import React from "react";
-import { Col, DatePicker, Form, Input, Row, Select, Space } from "antd";
+import React, { useEffect } from "react";
+import { Col, Form, FormProps, Input, Row, Switch } from "antd";
+import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
+import AddressField from "../../components/address-field/AddressField";
+import {
+  useCreateUserMutation,
+  useUpdateUserMutation,
+} from "../../store/api/userApiSlice";
 
-const { Option } = Select;
+type FieldType = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  mobile: string;
+  address: {
+    formatted: string;
+    latitude: number;
+    longitude: number;
+  };
+  isEnabled: boolean;
+};
 
-const UserForm = () => {
+interface UserFormProps {
+  form: any;
+  onSuccess: () => void;
+  formData: FieldType;
+  type: string;
+}
+
+const UserForm: React.FC<UserFormProps> = ({
+  form,
+  onSuccess,
+  formData,
+  type,
+}) => {
+  const [createUser, { data: user, isLoading, isSuccess, isError }] =
+    useCreateUserMutation();
+
+  const [
+    updateuser,
+    {
+      data: userUpdateData,
+      isLoading: updateLoading,
+      isSuccess: updateSuccess,
+      isError: updateError,
+    },
+  ] = useUpdateUserMutation();
+
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log("values:", values);
+    if (type === "NEW") {
+      createUser(values);
+    } else if (type === "EDIT") {
+      const payload = {
+        ...formData,
+        ...values,
+      };
+      updateuser(payload);
+    }
+  };
+
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
+    errorInfo,
+  ) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  useEffect(() => {
+    if (isSuccess || updateSuccess) {
+      onSuccess();
+    }
+  }, [isSuccess, updateSuccess]);
+
+  useEffect(() => {
+    if (type === "NEW") {
+      form.setFieldsValue({ isEnabled: false });
+    } else if (formData && type === "EDIT") {
+      form.setFieldsValue({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        mobile: formData.mobile,
+        address: formData.address,
+        isEnabled: formData.isEnabled,
+      });
+    }
+  }, [formData, type, form]);
+
   return (
-    <Form layout="vertical" hideRequiredMark>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: "Please enter user name" }]}
-          >
-            <Input placeholder="Please enter user name" />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            name="url"
-            label="Url"
-            rules={[{ required: true, message: "Please enter url" }]}
-          >
-            <Input
-              style={{ width: "100%" }}
-              addonBefore="http://"
-              addonAfter=".com"
-              placeholder="Please enter url"
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name="owner"
-            label="Owner"
-            rules={[{ required: true, message: "Please select an owner" }]}
-          >
-            <Select placeholder="Please select an owner">
-              <Option value="xiao">Xiaoxiao Fu</Option>
-              <Option value="mao">Maomao Zhou</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            name="type"
-            label="Type"
-            rules={[{ required: true, message: "Please choose the type" }]}
-          >
-            <Select placeholder="Please choose the type">
-              <Option value="private">Private</Option>
-              <Option value="public">Public</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            name="approver"
-            label="Approver"
-            rules={[{ required: true, message: "Please choose the approver" }]}
-          >
-            <Select placeholder="Please choose the approver">
-              <Option value="jack">Jack Ma</Option>
-              <Option value="tom">Tom Liu</Option>
-            </Select>
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            name="dateTime"
-            label="DateTime"
-            rules={[{ required: true, message: "Please choose the dateTime" }]}
-          >
-            <DatePicker.RangePicker
-              style={{ width: "100%" }}
-              getPopupContainer={(trigger) => trigger.parentElement!}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={24}>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              {
-                required: true,
-                message: "please enter url description",
-              },
-            ]}
-          >
-            <Input.TextArea
-              rows={4}
-              placeholder="please enter url description"
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form>
+    <>
+      <Form
+        form={form}
+        layout="vertical"
+        hideRequiredMark
+        initialValues={{ isEnabled: false }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        disabled={isLoading}
+      >
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="firstName"
+              label="First Name"
+              rules={[{ required: true, message: "First Name is required" }]}
+            >
+              <Input placeholder="Enter first name" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="lastName"
+              label="Last Name"
+              rules={[{ required: true, message: "Last Name is required" }]}
+            >
+              <Input placeholder="Enter last name" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Email is required" },
+                { type: "email", message: "Invalid email format" },
+              ]}
+            >
+              <Input prefix={<MailOutlined />} placeholder="Enter Email" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="mobile"
+              label="Mobile Number"
+              rules={[
+                { required: true, message: "Mobile number is required" },
+                {
+                  pattern: /^\+?[1-9]\d{1,14}$/,
+                  message: "Invalid phone number format",
+                },
+              ]}
+            >
+              <Input
+                prefix={<PhoneOutlined />}
+                style={{ width: "100%" }}
+                placeholder="Enter Mobile Number"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[
+                {
+                  required: true,
+                  message: "Address is required",
+                },
+              ]}
+            >
+              <AddressField
+                value={form.getFieldValue("address")}
+                onSubmit={(address, coordinates) => {
+                  form.setFieldsValue({
+                    address: {
+                      formatted: address,
+                      latitude: coordinates.lat,
+                      longitude: coordinates.lng,
+                    },
+                  });
+                }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name="isEnabled" label="Enable">
+              <Switch defaultChecked={false} />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </>
   );
 };
 

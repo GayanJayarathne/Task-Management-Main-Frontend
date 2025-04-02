@@ -1,28 +1,46 @@
 import { apiSlice } from "./apiSlice";
-import { User } from "../../types/user";
-import { BaseQueryMeta, BaseQueryResult } from "@reduxjs/toolkit/query";
-
-interface UserResponse {
-  data: {
-    user: User;
-    token: string;
-  };
-}
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
 
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUserList: builder.query({
+    getUserList: builder.mutation({
       query: (credentials) => ({
-        url: "/user",
+        url: "/users",
         method: "GET",
+      }),
+    }),
+    createUser: builder.mutation({
+      query: (credentials) => ({
+        url: "/users",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    getUserById: builder.mutation({
+      query: (id) => ({
+        url: "/users/" + id,
+        method: "GET",
+      }),
+    }),
+    updateUser: builder.mutation({
+      query: (payload) => ({
+        url: "/users/" + payload._id,
+        method: "PUT",
+        body: payload,
+      }),
+    }),
+    deleteUser: builder.mutation({
+      query: (id) => ({
+        url: "/users/" + id,
+        method: "DELETE",
       }),
     }),
   }),
 });
 
-export const { useGetUserListQuery } = userApiSlice;
+export const {
+  useGetUserListMutation,
+  useCreateUserMutation,
+  useGetUserByIdMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} = userApiSlice;
