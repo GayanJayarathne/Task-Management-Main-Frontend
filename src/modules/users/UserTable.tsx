@@ -17,6 +17,8 @@ interface DataType {
   tags?: string[];
 }
 
+const { Title } = Typography;
+
 const UserTable = () => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("NEW");
@@ -128,10 +130,16 @@ const UserTable = () => {
 
   return (
     <Flex vertical>
-      <Flex justify="space-between">
-        <Typography>User</Typography>
+      <Flex
+        justify="space-between"
+        align="center"
+        style={{ paddingBottom: "20px" }}
+      >
+        <Title style={{ margin: 0 }} level={3}>
+          User
+        </Title>
         <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
-          New account
+          New User
         </Button>
       </Flex>
       <Table<DataType>
@@ -139,7 +147,7 @@ const UserTable = () => {
         dataSource={userData && userData.length > 0 ? userData : []}
       />
       <Drawer
-        title="Create a new account"
+        title={type === "EDIT" ? "Edit user" : "Create new user"}
         width={720}
         onClose={onClose}
         open={open}

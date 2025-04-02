@@ -9,6 +9,8 @@ import {
   useGetTaskListMutation,
 } from "../../store/api/taskApiSlice";
 
+const { Title } = Typography;
+
 interface DataType {
   name: string;
   description: string;
@@ -135,8 +137,14 @@ const TaskTable = () => {
 
   return (
     <Flex vertical>
-      <Flex justify="space-between">
-        <Typography>User</Typography>
+      <Flex
+        justify="space-between"
+        align="center"
+        style={{ paddingBottom: "20px" }}
+      >
+        <Title style={{ margin: 0 }} level={3}>
+          Task
+        </Title>
         <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
           New Task
         </Button>
@@ -148,7 +156,7 @@ const TaskTable = () => {
         }
       />
       <Drawer
-        title="Create a new task"
+        title={type === "EDIT" ? "Edit Task" : "Create new task"}
         width={720}
         onClose={onClose}
         open={open}

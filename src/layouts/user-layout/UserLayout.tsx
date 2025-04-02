@@ -15,7 +15,7 @@ interface AdminLayoutProps {
 
 const { Header, Content, Footer, Sider } = Layout;
 
-const AdminLayout: FC<AdminLayoutProps> = (props) => {
+const UserLayout: FC<AdminLayoutProps> = (props) => {
   const { children } = props;
   const navigate = useNavigate();
 
@@ -28,18 +28,6 @@ const AdminLayout: FC<AdminLayoutProps> = (props) => {
       key: "dashboard",
       icon: <AppstoreOutlined />,
       label: "Dashboard",
-    },
-    {
-      key: "user",
-      icon: <TeamOutlined />,
-      label: "User",
-      onClick: () => navigate("/admin/user"),
-    },
-    {
-      key: "task",
-      icon: <ScheduleOutlined />,
-      label: "Task",
-      onClick: () => navigate("/admin/task"),
     },
   ];
 
@@ -115,4 +103,4 @@ const AdminLayout: FC<AdminLayoutProps> = (props) => {
   );
 };
 
-export default AdminLayout;
+export default UserLayout;

@@ -10,6 +10,7 @@ import AuthLayout from "../layouts/auth-layout/AuthLayout";
 import Logout from "../modules/auth/Logout";
 import UserTable from "../modules/users/UserTable";
 import TaskTable from "../modules/tasks/TaskTable";
+import UserLayout from "../layouts/user-layout/UserLayout";
 
 const TaskModuleWrapper = () => {
   const TaskManagementModule = lazy(() =>
@@ -35,7 +36,7 @@ export const routes: RouteObject[] = [
         element: <Navigate to="/admin" replace />,
       },
       {
-        path: "/admin",
+        path: "admin",
         element: (
           <AdminLayout>
             <Outlet />
@@ -47,15 +48,15 @@ export const routes: RouteObject[] = [
             element: <Dashboard />,
           },
           {
-            path: "/admin/about",
+            path: "about",
             element: <About />,
           },
           {
-            path: "/admin/user",
+            path: "user",
             element: <UserTable />,
           },
           {
-            path: "/admin/task",
+            path: "task",
             element: <TaskTable />,
           },
         ],
@@ -72,17 +73,13 @@ export const routes: RouteObject[] = [
       {
         path: "/user",
         element: (
-          <AdminLayout>
+          <UserLayout>
             <Outlet />
-          </AdminLayout>
+          </UserLayout>
         ),
         children: [
           {
             index: true,
-            element: <Dashboard />,
-          },
-          {
-            path: "/user/tasks/*",
             element: <TaskModuleWrapper />,
           },
         ],
