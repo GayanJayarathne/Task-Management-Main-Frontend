@@ -39,6 +39,7 @@ const AdminLayout: FC<AdminLayoutProps> = (props) => {
       key: "task",
       icon: <ScheduleOutlined />,
       label: "Task",
+      onClick: () => navigate("/admin/task"),
     },
   ];
 

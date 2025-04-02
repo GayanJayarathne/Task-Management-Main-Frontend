@@ -3,7 +3,7 @@ import { apiSlice } from "./apiSlice";
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getUserList: builder.mutation({
-      query: (credentials) => ({
+      query: () => ({
         url: "/users",
         method: "GET",
       }),
@@ -34,6 +34,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    getUserDropdown: builder.mutation({
+      query: () => ({
+        url: "/users/dropdown",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -43,4 +49,5 @@ export const {
   useGetUserByIdMutation,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useGetUserDropdownMutation,
 } = userApiSlice;

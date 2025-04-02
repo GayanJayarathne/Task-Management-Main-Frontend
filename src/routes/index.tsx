@@ -9,6 +9,7 @@ import Login from "../modules/auth/Login";
 import AuthLayout from "../layouts/auth-layout/AuthLayout";
 import Logout from "../modules/auth/Logout";
 import UserTable from "../modules/users/UserTable";
+import TaskTable from "../modules/tasks/TaskTable";
 
 const TaskModuleWrapper = () => {
   const TaskManagementModule = lazy(() =>
@@ -54,8 +55,8 @@ export const routes: RouteObject[] = [
             element: <UserTable />,
           },
           {
-            path: "/admin/tasks/*",
-            element: <TaskModuleWrapper />,
+            path: "/admin/task",
+            element: <TaskTable />,
           },
         ],
       },
@@ -79,6 +80,10 @@ export const routes: RouteObject[] = [
           {
             index: true,
             element: <Dashboard />,
+          },
+          {
+            path: "/user/tasks/*",
+            element: <TaskModuleWrapper />,
           },
         ],
       },
