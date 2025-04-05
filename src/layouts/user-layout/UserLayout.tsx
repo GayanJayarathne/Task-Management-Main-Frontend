@@ -5,8 +5,7 @@ import { Layout, Menu, theme } from "antd";
 import {
   AppstoreOutlined,
   PoweroffOutlined,
-  ScheduleOutlined,
-  TeamOutlined,
+  UnlockOutlined,
 } from "@ant-design/icons";
 
 interface AdminLayoutProps {
@@ -28,6 +27,12 @@ const UserLayout: FC<AdminLayoutProps> = (props) => {
       key: "dashboard",
       icon: <AppstoreOutlined />,
       label: "Dashboard",
+    },
+    {
+      key: "changePassword",
+      icon: <UnlockOutlined />,
+      label: "Change Password",
+      onClick: () => navigate("/user/change-password"),
     },
   ];
 
@@ -62,7 +67,7 @@ const UserLayout: FC<AdminLayoutProps> = (props) => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["4"]}
+          defaultSelectedKeys={["dashboard"]}
           items={menuItems}
         />
       </Sider>

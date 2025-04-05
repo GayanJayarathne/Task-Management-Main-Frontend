@@ -10,7 +10,7 @@ module.exports = {
         new ModuleFederationPlugin({
           name: "host",
           remotes: {
-            task: "task@http://localhost:3001/remoteEntry.js",
+            task: "task@http://localhost:3002/remoteEntry.js",
           },
           shared: {
             react: {

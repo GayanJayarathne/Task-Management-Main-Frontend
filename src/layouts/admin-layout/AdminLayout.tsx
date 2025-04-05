@@ -7,7 +7,10 @@ import {
   PoweroffOutlined,
   ScheduleOutlined,
   TeamOutlined,
+  UnlockOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../store/reducers/authSlice";
 
 interface AdminLayoutProps {
   children?: ReactNode;
@@ -18,6 +21,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const AdminLayout: FC<AdminLayoutProps> = (props) => {
   const { children } = props;
   const navigate = useNavigate();
+  const user = useSelector(selectUser);
 
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -40,6 +44,12 @@ const AdminLayout: FC<AdminLayoutProps> = (props) => {
       icon: <ScheduleOutlined />,
       label: "Task",
       onClick: () => navigate("/admin/task"),
+    },
+    {
+      key: "changePassword",
+      icon: <UnlockOutlined />,
+      label: "Change Password",
+      onClick: () => navigate("/admin/change-password"),
     },
   ];
 
@@ -74,7 +84,7 @@ const AdminLayout: FC<AdminLayoutProps> = (props) => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={["4"]}
+          defaultSelectedKeys={["dashboard"]}
           items={menuItems}
         />
       </Sider>
@@ -90,7 +100,7 @@ const AdminLayout: FC<AdminLayoutProps> = (props) => {
             <Dropdown menu={{ items }}>
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
-                  <Avatar>U</Avatar>
+                  <Avatar>{user?.firstName?.charAt(0).toUpperCase()}</Avatar>
                 </Space>
               </a>
             </Dropdown>

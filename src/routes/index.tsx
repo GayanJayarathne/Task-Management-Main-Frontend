@@ -4,13 +4,13 @@ import PrivateRoute from "./PrivateRoute";
 import { Outlet, RouteObject } from "react-router";
 import AdminLayout from "../layouts/admin-layout/AdminLayout";
 import Dashboard from "../modules/dashboard/Dashboard";
-import About from "../modules/dashboard/About";
 import Login from "../modules/auth/Login";
 import AuthLayout from "../layouts/auth-layout/AuthLayout";
 import Logout from "../modules/auth/Logout";
 import UserTable from "../modules/users/UserTable";
 import TaskTable from "../modules/tasks/TaskTable";
 import UserLayout from "../layouts/user-layout/UserLayout";
+import ChangePassword from "../modules/auth/ChangePassword";
 
 const TaskModuleWrapper = () => {
   const TaskManagementModule = lazy(() =>
@@ -48,16 +48,16 @@ export const routes: RouteObject[] = [
             element: <Dashboard />,
           },
           {
-            path: "about",
-            element: <About />,
-          },
-          {
             path: "user",
             element: <UserTable />,
           },
           {
             path: "task",
             element: <TaskTable />,
+          },
+          {
+            path: "/admin/change-password",
+            element: <ChangePassword />,
           },
         ],
       },
@@ -81,6 +81,10 @@ export const routes: RouteObject[] = [
           {
             index: true,
             element: <TaskModuleWrapper />,
+          },
+          {
+            path: "/user/change-password",
+            element: <ChangePassword />,
           },
         ],
       },

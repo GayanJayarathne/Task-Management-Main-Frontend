@@ -1,5 +1,4 @@
-import { Button, Card, Checkbox, Form, Input, Spin, Typography } from "antd";
-import { UserOutlined, LockOutlined, KeyOutlined } from "@ant-design/icons";
+import { Button, Card, Form, Input, message, Spin, Typography } from "antd";
 import {
   useAuthVerifyOtpMutation,
   useGetAuthenticateMutation,
@@ -21,6 +20,7 @@ type AuthType = "EMAIL" | "OTP" | "CREATE_PASSWORD" | "PASSWORD";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
   const [
     getAuthOtp,
     {
@@ -28,22 +28,53 @@ const Login = () => {
       isLoading: isOtpLoading,
       isSuccess: isOtpSuccess,
       isError: isOtpError,
+      error: otpError,
     },
   ] = useGetAuthOtpMutation();
-  const [getAuthenticate, { data: authData, isLoading, isSuccess, isError }] =
-    useGetAuthenticateMutation();
+  const [
+    getAuthenticate,
+    { data: authData, isLoading, isSuccess, isError, error },
+  ] = useGetAuthenticateMutation();
   const [
     verifyOtp,
     {
       data: verifyData,
       isLoading: isVerifyLoading,
       isSuccess: isVerifySuccess,
-      isError: iVerifyError,
+      isError: isVerifyError,
+      error: verifyError,
     },
   ] = useAuthVerifyOtpMutation();
 
   const [authType, setAuthType] = useState<AuthType>("EMAIL");
   const [email, setEmail] = useState<string>("");
+
+  const errorMessage = (data: any) => {
+    messageApi.open({
+      type: "error",
+      content: data.data.message
+        ? data.data.message
+        : "Something went wrong, Please try again",
+    });
+  };
+
+  useEffect(() => {
+    if (isOtpError) {
+      errorMessage(otpError);
+    }
+  }, [isOtpError]);
+
+  useEffect(() => {
+    if (isVerifyError) {
+      errorMessage(verifyError);
+    }
+  }, [isVerifyError]);
+
+  useEffect(() => {
+    if (isError) {
+      errorMessage(error);
+    }
+  }, [isError]);
 
   const onSubmitEmail = (values: any) => {
     setEmail(values.email);
@@ -111,7 +142,7 @@ const Login = () => {
             },
           ]}
         >
-          <Input prefix={<UserOutlined />} placeholder="Email" />
+          <Input placeholder="Email" />
         </Form.Item>
 
         <Form.Item>
@@ -131,6 +162,8 @@ const Login = () => {
     return (
       <Form
         name="normal_login"
+        layout="vertical"
+        hideRequiredMark
         className="login-form"
         initialValues={{
           otp: "",
@@ -138,7 +171,6 @@ const Login = () => {
         }}
         onFinish={onSubmitOtp}
       >
-        <Typography>OTP sent to {email}!</Typography>
         <Form.Item
           name="otp"
           rules={[
@@ -147,8 +179,9 @@ const Login = () => {
               message: "Please enter otp!",
             },
           ]}
+          label="OTP sent to {email}!"
         >
-          <Input prefix={<KeyOutlined />} placeholder="OTP" />
+          <Input placeholder="OTP" />
         </Form.Item>
 
         <Form.Item>
@@ -168,6 +201,8 @@ const Login = () => {
     return (
       <Form
         name="normal_login"
+        layout="vertical"
+        hideRequiredMark
         className="login-form"
         initialValues={{
           email: email,
@@ -175,22 +210,22 @@ const Login = () => {
         }}
         onFinish={onSubmitPassword}
       >
-        <Typography>Enter new password to login</Typography>
         <Form.Item
           name="password"
           rules={[
             { required: true, message: "Please enter your password" },
             { min: 6, message: "Password must be at least 6 characters long" },
           ]}
+          label="Enter new password to login"
           hasFeedback
         >
           <Input.Password placeholder="Enter password" />
         </Form.Item>
 
-        <Typography>Confirm your password</Typography>
         <Form.Item
           name="confirmPassword"
           dependencies={["password"]}
+          label="Confirm your password"
           hasFeedback
           rules={[
             { required: true, message: "Please confirm your password" },
@@ -223,6 +258,8 @@ const Login = () => {
     return (
       <Form
         name="normal_login"
+        layout="vertical"
+        hideRequiredMark
         className="login-form"
         initialValues={{
           email: email,
@@ -230,13 +267,13 @@ const Login = () => {
         }}
         onFinish={onSubmitPassword}
       >
-        <Typography>Enter your password to login</Typography>
         <Form.Item
           name="password"
           rules={[
             { required: true, message: "Please enter your password" },
             { min: 6, message: "Password must be at least 6 characters long" },
           ]}
+          label="Enter your password to login"
           hasFeedback
         >
           <Input.Password placeholder="Enter password" />
@@ -299,6 +336,7 @@ const Login = () => {
           {onRenderForm()}
         </Card>
       )}
+      {contextHolder}
     </>
   );
 };

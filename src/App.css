@@ -8,6 +8,7 @@
 
 body {
     margin:0;
+    background-color: #3f639f;
 }
 
 .App {
@@ -16,7 +17,9 @@ body {
 
 .demo-logo-vertical {
     padding: 8px 16px;
+    margin: 8px 32px;
     background-color: white;
     font-size: 16px;
     border-radius: 12px;
+    text-align: center;
 }
