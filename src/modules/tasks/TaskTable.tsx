@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Drawer, Flex, Form, Space, Table, Typography } from "antd";
+import {
+  Button,
+  Drawer,
+  Flex,
+  Form,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  Typography,
+} from "antd";
 import type { TableProps } from "antd";
 import { PlusOutlined, EditOutlined, RestOutlined } from "@ant-design/icons";
 import TaskForm from "./TaskForm";
@@ -22,6 +32,7 @@ interface DataType {
 const TaskTable = () => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("NEW");
+  const [messageApi, contextHolder] = message.useMessage();
   const [getTaskList, { data: taskData, isLoading, isSuccess, isError }] =
     useGetTaskListMutation();
   const [
@@ -80,22 +91,58 @@ const TaskTable = () => {
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <Button icon={<EditOutlined />} onClick={() => onEditUser(record)} />
-          <Button
-            icon={<RestOutlined />}
-            onClick={() => onDeleteUser(record)}
-          />
+          <Button icon={<EditOutlined />} onClick={() => onEditTask(record)} />
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={() => onDeleteTask(record)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button icon={<RestOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
 
-  const onEditUser = (row: any) => {
+  const cancel = () => {
+    console.log("Canceled");
+  };
+
+  const success = (message: string) => {
+    messageApi.open({
+      type: "success",
+      content: `Successfully ${message}`,
+    });
+  };
+
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Something went wrong, Please try again",
+    });
+  };
+
+  useEffect(() => {
+    if (deleteError || isError) {
+      error();
+    }
+  }, [deleteError, isError]);
+
+  const onEditTask = (row: any) => {
     setType("EDIT");
     getUserById(row._id);
   };
 
-  const onDeleteUser = (row: any) => {
+  useEffect(() => {
+    if (isSuccess) {
+      success("fetched");
+    }
+  }, [isSuccess]);
+
+  const onDeleteTask = (row: any) => {
     deleteUser(row._id);
   };
 
@@ -107,6 +154,7 @@ const TaskTable = () => {
 
   useEffect(() => {
     if (deleteSuccess) {
+      success("deleted");
       getTaskList("");
     }
   }, [deleteSuccess]);
@@ -125,6 +173,7 @@ const TaskTable = () => {
   const onSuccess = () => {
     getTaskList("");
     onClose();
+    success(type === "NEW" ? "created" : "updated");
   };
 
   useEffect(() => {
@@ -181,6 +230,7 @@ const TaskTable = () => {
           type={type}
         />
       </Drawer>
+      {contextHolder}
     </Flex>
   );
 };

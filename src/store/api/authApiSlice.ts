@@ -1,11 +1,11 @@
 import { apiSlice } from "./apiSlice";
 import { User } from "../../types/user";
-import { BaseQueryMeta, BaseQueryResult } from "@reduxjs/toolkit/query";
 
 interface UserResponse {
   data: {
     user: User;
     token: string;
+    refreshToken: string;
   };
 }
 
@@ -16,9 +16,23 @@ interface LoginRequest {
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getAuthOtp: builder.mutation({
+      query: (credentials) => ({
+        url: "/auth/request-otp",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    authVerifyOtp: builder.mutation({
+      query: (credentials) => ({
+        url: "/auth/validate-otp",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
     getAuthenticate: builder.mutation<UserResponse, LoginRequest>({
       query: (credentials) => ({
-        url: "/auth",
+        url: "/auth/submit-password",
         method: "POST",
         body: credentials,
       }),
@@ -26,4 +40,8 @@ export const authApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetAuthenticateMutation } = authApiSlice;
+export const {
+  useGetAuthOtpMutation,
+  useAuthVerifyOtpMutation,
+  useGetAuthenticateMutation,
+} = authApiSlice;

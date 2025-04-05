@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Col, Form, FormProps, Input, Row, Switch } from "antd";
+import { Col, Form, FormProps, Input, message, Row, Switch } from "antd";
 import { MailOutlined, PhoneOutlined } from "@ant-design/icons";
 import AddressField from "../../components/address-field/AddressField";
 import {
@@ -37,7 +37,7 @@ const UserForm: React.FC<UserFormProps> = ({
     useCreateUserMutation();
 
   const [
-    updateuser,
+    updateUser,
     {
       data: userUpdateData,
       isLoading: updateLoading,
@@ -45,6 +45,21 @@ const UserForm: React.FC<UserFormProps> = ({
       isError: updateError,
     },
   ] = useUpdateUserMutation();
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Something went wrong, Please try again",
+    });
+  };
+
+  useEffect(() => {
+    if (isError || updateError) {
+      error();
+    }
+  }, [updateError, isError]);
 
   const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
     console.log("values:", values);
@@ -55,7 +70,7 @@ const UserForm: React.FC<UserFormProps> = ({
         ...formData,
         ...values,
       };
-      updateuser(payload);
+      updateUser(payload);
     }
   };
 
@@ -183,6 +198,7 @@ const UserForm: React.FC<UserFormProps> = ({
           </Col>
         </Row>
       </Form>
+      {contextHolder}
     </>
   );
 };

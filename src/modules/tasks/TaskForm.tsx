@@ -5,6 +5,7 @@ import {
   Form,
   FormProps,
   Input,
+  message,
   Row,
   Select,
   Switch,
@@ -63,6 +64,21 @@ const TaskForm: React.FC<UserFormProps> = ({
       isError: updateError,
     },
   ] = useUpdateTaskMutation();
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Something went wrong, Please try again",
+    });
+  };
+
+  useEffect(() => {
+    if (isError || updateError) {
+      error();
+    }
+  }, [updateError, isError]);
 
   const [getUserDropdown, { data: dropdownData, isLoading: dropdownLoading }] =
     useGetUserDropdownMutation();
@@ -183,6 +199,7 @@ const TaskForm: React.FC<UserFormProps> = ({
           </Col>
         </Row>
       </Form>
+      {contextHolder}
     </>
   );
 };

@@ -5,10 +5,17 @@ import { getArrayFromLocalStorage } from "../../utils/helpers";
 export interface AuthState {
   user?: User | null;
   token?: string | null;
+  refreshToken?: string | null;
 }
 
 const getToken = () => {
   return localStorage.getItem("token") ? localStorage.getItem("token") : null;
+};
+
+const getRefreshToken = () => {
+  return localStorage.getItem("token")
+    ? localStorage.getItem("refreshToken")
+    : null;
 };
 
 const getUser = () => {
@@ -18,6 +25,7 @@ const getUser = () => {
 const initialState: AuthState = {
   token: getToken(),
   user: getUser(),
+  refreshToken: getRefreshToken(),
 };
 
 export const authSlice = createSlice({
@@ -30,10 +38,18 @@ export const authSlice = createSlice({
     setToken: (state, action) => {
       state.token = action.payload;
     },
+    setRefreshToken: (state, action) => {
+      state.refreshToken = action.payload;
+    },
+    logout: (state) => {
+      state.token = null;
+      state.refreshToken = null;
+      state.user = null;
+    },
   },
 });
 
-export const { setUser, setToken } = authSlice.actions;
+export const { setUser, setToken, setRefreshToken, logout } = authSlice.actions;
 
 export default authSlice.reducer;
 

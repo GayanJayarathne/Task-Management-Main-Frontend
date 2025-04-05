@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
 import { Flex, Layout, Spin } from "antd";
-import { setToken, setUser } from "../../store/reducers/authSlice";
+import { logout, setToken, setUser } from "../../store/reducers/authSlice";
 import LoadingScreen from "../../components/loading-screen/LoadingScreen";
 
 const Logout = (props: { isMsal?: boolean }) => {
@@ -15,8 +15,7 @@ const Logout = (props: { isMsal?: boolean }) => {
   }, []);
 
   const onLogout = async () => {
-    dispatch(setUser(null));
-    dispatch(setToken(null));
+    dispatch(logout());
     localStorage.clear();
     setTimeout(() => {
       navigate("/");

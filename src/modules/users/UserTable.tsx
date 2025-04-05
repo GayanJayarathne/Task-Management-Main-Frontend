@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Drawer, Flex, Form, Space, Table, Typography } from "antd";
+import {
+  Button,
+  Drawer,
+  Flex,
+  Form,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+  Typography,
+} from "antd";
 import type { TableProps } from "antd";
 import { PlusOutlined, EditOutlined, RestOutlined } from "@ant-design/icons";
 import UserForm from "./UserForm";
@@ -22,6 +32,7 @@ const { Title } = Typography;
 const UserTable = () => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("NEW");
+  const [messageApi, contextHolder] = message.useMessage();
   const [getUsersList, { data: userData, isLoading, isSuccess, isError }] =
     useGetUserListMutation();
   const [
@@ -74,14 +85,50 @@ const UserTable = () => {
       render: (_, record) => (
         <Space size="middle">
           <Button icon={<EditOutlined />} onClick={() => onEditUser(record)} />
-          <Button
-            icon={<RestOutlined />}
-            onClick={() => onDeleteUser(record)}
-          />
+          <Popconfirm
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={() => onDeleteUser(record)}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button icon={<RestOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
+
+  const cancel = () => {
+    console.log("Cancelled");
+  };
+
+  const success = (message: string) => {
+    messageApi.open({
+      type: "success",
+      content: `Successfully ${message}`,
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      success("fetched");
+    }
+  }, [isSuccess]);
+
+  const error = () => {
+    messageApi.open({
+      type: "error",
+      content: "Something went wrong, Please try again",
+    });
+  };
+
+  useEffect(() => {
+    if (deleteError || isError || userError) {
+      error();
+    }
+  }, [deleteError, isError, userError]);
 
   const onEditUser = (row: any) => {
     setType("EDIT");
@@ -100,6 +147,7 @@ const UserTable = () => {
 
   useEffect(() => {
     if (deleteSuccess) {
+      success("deleted");
       getUsersList("");
     }
   }, [deleteSuccess]);
@@ -116,6 +164,7 @@ const UserTable = () => {
   };
 
   const onSuccess = () => {
+    success(type === "NEW" ? "created" : "updated");
     getUsersList("");
     onClose();
   };
@@ -172,6 +221,7 @@ const UserTable = () => {
           type={type}
         />
       </Drawer>
+      {contextHolder}
     </Flex>
   );
 };
