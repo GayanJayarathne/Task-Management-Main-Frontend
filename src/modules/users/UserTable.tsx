@@ -31,7 +31,7 @@ const { Title } = Typography;
 
 const UserTable = () => {
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState("NEW");
+  const [type, setType] = useState<"NEW" | "EDIT">("NEW");
   const [messageApi, contextHolder] = message.useMessage();
   const [getUsersList, { data: userData, isLoading, isSuccess, isError }] =
     useGetUserListMutation();

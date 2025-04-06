@@ -31,7 +31,7 @@ interface DataType {
 
 const TaskTable = () => {
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState("NEW");
+  const [type, setType] = useState<"NEW" | "EDIT">("NEW");
   const [messageApi, contextHolder] = message.useMessage();
   const [getTaskList, { data: taskData, isLoading, isSuccess, isError }] =
     useGetTaskListMutation();
