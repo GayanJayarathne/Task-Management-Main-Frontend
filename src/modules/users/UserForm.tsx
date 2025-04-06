@@ -24,7 +24,7 @@ interface UserFormProps {
   form: any;
   onSuccess: () => void;
   formData: FieldType;
-  type: string;
+  type: "NEW" | "EDIT";
 }
 
 const UserForm: React.FC<UserFormProps> = ({

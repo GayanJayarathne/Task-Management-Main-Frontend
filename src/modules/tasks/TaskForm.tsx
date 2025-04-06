@@ -40,7 +40,7 @@ interface UserFormProps {
   form: any;
   onSuccess: () => void;
   formData: FormFieldType;
-  type: string;
+  type: "NEW" | "EDIT";
 }
 const { RangePicker } = DatePicker;
 
