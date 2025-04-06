@@ -160,6 +160,7 @@ const UserTable = () => {
 
   const onClose = () => {
     setType("NEW");
+    form.resetFields();
     setOpen(false);
   };
 

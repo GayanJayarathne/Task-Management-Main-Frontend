@@ -62,7 +62,9 @@ const UserLayout: FC<AdminLayoutProps> = (props) => {
           console.log(collapsed, type);
         }}
       >
-        <div className="demo-logo-vertical">TMS</div>
+        <div onClick={() => navigate("/")} className="demo-logo-vertical">
+          TMS
+        </div>
         <Divider style={{ borderColor: "#fafafa" }} />
         <Menu
           theme="dark"

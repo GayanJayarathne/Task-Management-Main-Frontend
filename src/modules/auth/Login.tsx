@@ -113,6 +113,7 @@ const Login = () => {
       dispatch(setRefreshToken(authData?.data.refreshToken));
       setToLocalStorage("token", authData?.data.token);
       setArrayToLocalStorage("user", authData?.data.user);
+      setToLocalStorage("refreshToken", authData?.data.refreshToken);
       navigate("/");
     }
   }, [isSuccess]);

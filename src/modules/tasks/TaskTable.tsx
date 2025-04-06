@@ -167,6 +167,7 @@ const TaskTable = () => {
 
   const onClose = () => {
     setType("NEW");
+    form.resetFields();
     setOpen(false);
   };
 
