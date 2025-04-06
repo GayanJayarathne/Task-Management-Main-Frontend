@@ -121,15 +121,17 @@ const TaskForm: React.FC<UserFormProps> = ({
 
   useEffect(() => {
     if (type === "NEW") {
-      form.setFieldsValue({ isEnabled: false });
+      form.setFieldsValue({ isEnabled: false, dateRange: [] });
     } else if (formData && type === "EDIT") {
       form.setFieldsValue({
         name: formData.name,
         description: formData.description,
-        dateRange: [
-          dayjs(formData.dateRange.startDate),
-          dayjs(formData.dateRange.endDate),
-        ],
+        dateRange: formData.dateRange
+          ? [
+              dayjs(formData.dateRange.startDate),
+              dayjs(formData.dateRange.endDate),
+            ]
+          : [],
         userId: formData.userId,
         isEnabled: formData.isEnabled,
       });

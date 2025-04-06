@@ -41,7 +41,7 @@ const baseQueryWithReAuth: BaseQueryFn<
     );
 
     if (refreshResult.data) {
-      const newToken = (refreshResult.data as any).accessToken;
+      const newToken = (refreshResult.data as any).token;
 
       api.dispatch(setToken(newToken));
 

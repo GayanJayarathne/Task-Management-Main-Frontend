@@ -171,6 +171,7 @@ const Login = () => {
         }}
         onFinish={onSubmitOtp}
       >
+        <Typography>{`OTP sent to ${email}!`}</Typography>
         <Form.Item
           name="otp"
           rules={[
@@ -179,7 +180,6 @@ const Login = () => {
               message: "Please enter otp!",
             },
           ]}
-          label="OTP sent to {email}!"
         >
           <Input placeholder="OTP" />
         </Form.Item>
