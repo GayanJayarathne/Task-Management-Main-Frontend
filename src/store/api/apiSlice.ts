@@ -6,6 +6,7 @@ import {
 import type { FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { RootState } from "../store";
 import { setToken } from "../reducers/authSlice";
+import { setToLocalStorage } from "../../utils/helpers";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_BASE_URL,
@@ -44,6 +45,7 @@ const baseQueryWithReAuth: BaseQueryFn<
       const newToken = (refreshResult.data as any).token;
 
       api.dispatch(setToken(newToken));
+      setToLocalStorage("token", newToken);
 
       result = await baseQuery(args, api, extraOptions);
     } else {
